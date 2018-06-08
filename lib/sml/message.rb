@@ -6,30 +6,26 @@ require 'sml/types/unsigned_integer'
 
 module Sml
   class Message
-    class << self
-      def parse(bytes)
-        buffer = bytes.dup
-        new(buffer)
-      end
+    attr_reader :transaction_id, :group_number, :abort_on_error, :body, :crc
+
+    def initialize(tree)
+      expect_message_structure!(tree)
+      @transaction_id = tree[0]
+      @group_number   = tree[1]
+      @abort_on_error = tree[2]
+      @body           = MessageBody.from_tree(tree[3])
+      @crc            = tree[4]
     end
 
-    def initialize(bytes)
-      expect_message_sequence!(bytes)
-      @transaction_id = Types::String.parse(bytes)
-      @group_no = Types::UnsignedInteger.parse(bytes)
-      @abort_on_error = Types::UnsignedInteger.parse(bytes)
-      @body = MessageBody.parse(bytes)
-      @crc = Types::UnsignedInteger.parse(bytes)
-      eom = bytes.shift
-      raise ArgumentError, "Expected EndOfSmlMsg, but got #{eom}" if eom > 0
+    def to_s
+      "<Sml Message T:#{transaction_id.inspect} G:#{group_number} #{body}>"
     end
 
     private
 
-    def expect_message_sequence!(bytes)
-      type, length = Types::TypeLength.parse(bytes)
-      raise ArgumentError, 'Expected to get a "List of ..."' if type != 7
-      raise ArgumentError, "Expected list to have a length of 6, got #{length}" if length != 6
+    def expect_message_structure!(tree)
+      raise "Expected message structure of length 6, got #{tree.size}" unless tree.size == 6
+      raise 'No end of sml message found' unless tree[5].nil?
     end
   end
 end

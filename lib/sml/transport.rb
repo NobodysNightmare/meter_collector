@@ -12,7 +12,8 @@ module Sml
 
     def each_message
       while true do
-        yield Message.parse(next_message_bytes)
+        tree = Sml::Types.parse(next_message_bytes)
+        yield Message.new(tree)
       end
     end
 

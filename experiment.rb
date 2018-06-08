@@ -4,5 +4,5 @@ require 'sml'
 
 file = File.open('examples/sml-transport')
 Sml::Transport.new(file).each_message do |message|
-  puts "Message size: #{message.size}"
+  puts "Message: #{message}"
 end
