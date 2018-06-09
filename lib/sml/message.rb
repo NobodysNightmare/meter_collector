@@ -1,9 +1,5 @@
 require 'sml/message_body'
 
-require 'sml/types/string'
-require 'sml/types/type_length'
-require 'sml/types/unsigned_integer'
-
 module Sml
   class Message
     attr_reader :transaction_id, :group_number, :abort_on_error, :body, :crc

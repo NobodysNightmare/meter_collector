@@ -1,3 +1,5 @@
+require 'sml/time'
+
 require 'sml/message_body/public_open_request'
 require 'sml/message_body/public_open_response'
 

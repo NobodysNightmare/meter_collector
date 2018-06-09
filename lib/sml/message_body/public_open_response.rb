@@ -9,7 +9,7 @@ module Sml
         @client_id       = tree[1]
         @request_file_id = tree[2]
         @server_id       = tree[3]
-        @reference_time  = tree[4] # TODO: parse as time
+        @reference_time  = Sml::Time.from_tree(tree[4])
         @sml_version     = tree[5]
       end
     end
