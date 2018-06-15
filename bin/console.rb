@@ -1,5 +1,6 @@
 $LOAD_PATH << './lib'
 
+require 'd0'
 require 'sml'
 
 def bits_of(integer)

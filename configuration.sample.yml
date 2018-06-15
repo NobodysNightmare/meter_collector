@@ -1,0 +1,9 @@
+remote: &remote
+  host: "https://energy.example.com/"
+  api_key: '1234567890'
+ports:
+  - path: "/dev/ttyUSB5"
+    uploads:
+      1.8.0:
+        <<: *remote
+        serial: "ABC123"

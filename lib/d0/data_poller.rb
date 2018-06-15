@@ -5,10 +5,11 @@ module D0
   class DataPoller
     ACK = 0x06.chr
 
-    IDENTIFICATION_MATCHER = %r{\A(/[A-Z][A-Z][A-Za-z][0-9].+)\z}
-    DATA_MATCHER = %r{([0-9\.]+\([0-9\.]+\*[A-Za-z]+\))}
+    IDENTIFICATION_MATCHER = %r{\A(/[A-Z][A-Z][A-Za-z][0-9].+)$}
+
+    DATA_MATCHER = %r{([^()/!]+\([ ]*[0-9\.]+(?:\*[A-Za-z]+)?\))}
     DATA_END_MATCHER = %r{\!}
-    DATA_SPLITTER = %r{([0-9\.]+)\(([0-9\.]+)\*([A-Za-z])\)}
+    DATA_SPLITTER = %r{([^()/!]+)\([ ]*([0-9\.]+)(?:\*([A-Za-z]+))?\)}
 
     DEFAULT_CONFIG = {
       'baud' => 300,
@@ -52,9 +53,7 @@ module D0
     end
 
     def read_identification
-      ident = wait_for IDENTIFICATION_MATCHER
-      puts "Identification: #{ident}"
-      ident
+      wait_for IDENTIFICATION_MATCHER
     end
 
     def acknowledge_identification(baud_id)
@@ -64,10 +63,10 @@ module D0
     def read_data
       result = {}
       while true do
-        data = wait_for([DATA_MATCHER, DATA_END_MATCHER])
-        break if data.nil?
-        data = DATA_SPLITTER.match(data)
-        result[data[1]] = [data[2], data[3]]
+        row = wait_for([DATA_MATCHER, DATA_END_MATCHER])
+        break if row.nil?
+        data = DATA_SPLITTER.match(row)
+        result[data[1]] = [Rational(data[2]), data[3]]
       end
       result
     end
@@ -75,6 +74,7 @@ module D0
     def wait_for(regexes)
       regexes = Array(regexes)
       while true do
+        message = nil
         Timeout.timeout(read_timeout) { message = @port.readline }
         matches = regexes.map { |r| r.match(message) }.compact
         break if matches.any?
