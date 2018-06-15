@@ -1,4 +1,5 @@
-$LOAD_PATH << './lib'
+root = File.expand_path('..', File.absolute_path(__dir__))
+$LOAD_PATH << "#{root}/lib"
 
 require 'd0'
 require 'meter_collector'
