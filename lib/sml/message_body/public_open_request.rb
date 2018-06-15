@@ -13,6 +13,11 @@ module Sml
         @password        = tree[5]
         @sml_version     = tree[6]
       end
+
+      def to_s
+        server = server_id.size > 0 ? server_id.inspect : 'BROADCAST'
+        "<PublicOpenReq S:#{server} RF:#{request_file_id}>"
+      end
     end
   end
 end

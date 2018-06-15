@@ -26,7 +26,7 @@ module Sml
           length_bytes = [tl & LENGTH_MASK]
           while (tl & MORE_LENGTH_MASK) > 0 do
             tl = bytes.shift
-            raise ArgumentError 'Unexpected Bits in TL Length extension' if (tl & TYPE_MASK) > 0
+            raise ArgumentError, 'Unexpected Bits in TL Length extension' if (tl & TYPE_MASK) > 0
             length_bytes << tl & LENGTH_MASK
           end
 
