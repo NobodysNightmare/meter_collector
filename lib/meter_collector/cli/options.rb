@@ -24,7 +24,7 @@ class MeterCollector
 
       def parser
         OptionParser.new do |p|
-          p.banner = 'Usage: meter_collector.rb -f FILE [options]'
+          p.banner = 'Usage: meter_collector -f FILE [options]'
           p.separator ''
 
           p.on('-f', '--file CONFIG', 'Path to a configuration file') do |file|
@@ -47,7 +47,7 @@ class MeterCollector
         puts
         puts 'For more details see:'
         puts
-        puts '  meter_collector.rb --help'
+        puts '  meter_collector --help'
         puts
         exit(-1)
       end
