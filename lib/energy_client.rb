@@ -7,8 +7,8 @@ class EnergyClient
   end
 
   def send_reading(time, serial, value)
-    HTTParty.post(
-      "#{host}/api/meters/#{serial}/readings",
+    response = HTTParty.post(
+      "#{@host}/api/meters/#{serial}/readings",
       headers: {
         'X-API-Key' => @api_key
       },
@@ -21,6 +21,12 @@ class EnergyClient
         ]
       })
 
-      # TODO: validate response
+      if response.content_type != 'application/json'
+        raise "Unexpected Content-Type '#{response.content_type}'"
+      end
+
+      return if response.code == 201
+
+      raise response['error']
   end
 end
