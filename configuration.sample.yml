@@ -1,6 +1,7 @@
 remote: &remote
   host: "https://energy.example.com/"
   api_key: '1234567890'
+sentry_dsn: 'https://public:secret@example.com/project-id'
 ports:
   - path: "/dev/ttyUSB5"
     uploads:
