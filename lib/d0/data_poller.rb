@@ -5,7 +5,7 @@ module D0
   class DataPoller
     ACK = 0x06.chr
 
-    IDENTIFICATION_MATCHER = %r{\A(/[A-Z][A-Z][A-Za-z][0-9].+)$}
+    IDENTIFICATION_MATCHER = %r{\A/[A-Z][A-Z][A-Za-z]([0-9]).+$}
 
     DATA_MATCHER = %r{([^()/!]+\([ ]*[0-9\.]+(?:\*[A-Za-z]+)?\))}
     DATA_END_MATCHER = %r{\!}
@@ -37,8 +37,8 @@ module D0
     def poll
       initialize_port
       request_data
-      read_identification
-      acknowledge_identification(0)
+      baud_id = read_supported_baudrate
+      update_baudrate(baud_id)
       read_data
     end
 
@@ -52,12 +52,20 @@ module D0
       @port.print "/?!\r\n"
     end
 
-    def read_identification
+    def read_supported_baudrate
       wait_for IDENTIFICATION_MATCHER
     end
 
-    def acknowledge_identification(baud_id)
+    def update_baudrate(baud_id)
+      new_rate = BAUD_RATES[baud_id]
+      if new_rate.nil?
+        puts "Unsupported baudrate #{baud_id}"
+        baud_id = '0'
+        new_rate = 300
+      end
       @port.print "#{ACK}0#{baud_id}0\r\n"
+      sleep(0.5) # wait for message to be sent before baudrate changeover (flushing etc did not help here)
+      @port.baud = new_rate
     end
 
     def read_data
