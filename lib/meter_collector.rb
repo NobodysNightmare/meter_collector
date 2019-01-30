@@ -1,4 +1,5 @@
 require 'meter_collector/energy_client'
+require 'meter_collector/sources'
 
 class MeterCollector
   def initialize(configuration)
@@ -6,13 +7,13 @@ class MeterCollector
   end
 
   def print_values
-    each_port_with_config do |port, config|
-      puts " ### Port #{config['path']}"
-      result = D0::DataPoller.new(port).poll
-      result.each do |key, (value, unit)|
-        print "#{key}: #{value.to_f} #{unit}"
+    each_source_with_config do |source, config|
+      puts " ### #{source}"
+      readings = source.fetch_readings
+      readings.each do |key, reading|
+        print "#{key}: #{reading.value.to_f} #{reading.unit}"
         if unit == 'kWh'
-          print " (#{to_wh(value, unit).to_i} Wh)"
+          print " (#{to_wh(reading.value, reading.unit).to_i} Wh)"
         end
         puts
       end
@@ -21,15 +22,16 @@ class MeterCollector
   end
 
   def upload_values
-    each_port_with_config do |port, config|
+    each_source_with_config do |source, config|
       time = Time.now
-      result = D0::DataPoller.new(port).poll
+      readings = source.fetch_readings
       config['uploads'].each do |key, upload_config|
-        value, unit = result[key]
-        unless value
+        reading = readings[key]
+        unless reading
           puts "Skipping '#{key}': not in result set."
+          next
         end
-        value = to_wh(value, unit).to_i
+        value = to_wh(reading.value, reading.unit).to_i
         client = EnergyClient.new(upload_config['host'], upload_config['api_key'])
         client.send_reading(time, upload_config['serial'], value)
       end
@@ -38,11 +40,9 @@ class MeterCollector
 
   private
 
-  def each_port_with_config
-    @config['ports'].each do |config|
-      SerialPort.open(config['path']) do |port|
-        yield port, config
-      end
+  def each_source_with_config
+    @config['sources'].each do |config|
+      yield Sources.create_with_config(config), config
     end
   end
 
