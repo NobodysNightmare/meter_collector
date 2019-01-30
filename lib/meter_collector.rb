@@ -1,4 +1,4 @@
-require 'energy_client'
+require 'meter_collector/energy_client'
 
 class MeterCollector
   def initialize(configuration)
