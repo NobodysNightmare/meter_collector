@@ -12,7 +12,7 @@ class MeterCollector
       readings = source.fetch_readings
       readings.each do |key, reading|
         print "#{key}: #{reading.value.to_f} #{reading.unit}"
-        if unit == 'kWh'
+        if reading.unit == 'kWh'
           print " (#{to_wh(reading.value, reading.unit).to_i} Wh)"
         end
         puts
