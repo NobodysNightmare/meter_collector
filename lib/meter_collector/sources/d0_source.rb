@@ -16,11 +16,13 @@ class MeterCollector
       end
 
       def fetch_readings
+        result = nil
         SerialPort.open(@port_path) do |port|
-          D0::DataPoller.new(port).poll.map do |key, (value, unit)|
+          result = D0::DataPoller.new(port).poll.map do |key, (value, unit)|
             [key, Reading.new(value, unit)]
           end.to_h
         end
+        result
       end
 
       def to_s
