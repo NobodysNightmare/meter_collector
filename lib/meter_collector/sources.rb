@@ -1,9 +1,11 @@
 require 'meter_collector/sources/d0_source.rb'
+require 'meter_collector/sources/modbus_source.rb'
 
 class MeterCollector
   module Sources
     AVAILABLE_SOURCES = [
-      Sources::D0Source
+      Sources::D0Source,
+      Sources::ModbusSource
     ]
 
     class << self

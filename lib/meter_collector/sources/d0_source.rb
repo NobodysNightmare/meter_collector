@@ -4,6 +4,9 @@ require 'meter_collector/reading.rb'
 
 class MeterCollector
   module Sources
+    # Reads from a D0 (IEC 62056-21 compliant) meter connected via
+    # (infrared) serial port.
+    # Will return all readings sent by the meter.
     class D0Source
       class << self
         def name

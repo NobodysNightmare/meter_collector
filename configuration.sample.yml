@@ -9,3 +9,20 @@ sources:
       1.8.0:
         <<: *remote
         serial: "ABC123"
+  - type: "modbus"
+    url: "modbus://127.0.0.1:502"
+    unit_id: 128
+    registers:
+      totalWH:
+        address: 40302
+        register_count: 4
+        unit: 'Wh'
+  - type: "modbus"
+    path: "/dev/ttyUSB0"
+    baud: 4800
+    unit_id: 128
+    registers:
+      totalWH:
+        address: 40302
+        register_count: 4
+        unit: 'Wh'
