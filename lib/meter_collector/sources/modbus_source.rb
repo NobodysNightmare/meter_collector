@@ -24,6 +24,7 @@ class MeterCollector
                       register_config.fetch('register_count')
                     )
             value = combine_holding_registers(value)
+            value = convert(value, register_config.fetch('format', 'integer').to_sym)
             [
               register_name,
               Reading.new(value, register_config.fetch('unit'))
@@ -94,6 +95,28 @@ class MeterCollector
         end
 
         result
+      end
+
+      def convert(value, format)
+        case format
+        when :integer
+          value
+        when float
+          int_bytes_to_float(value)
+        else
+          raise "Unknown number format #{format}"
+      end
+
+      def int_bytes_to_float(value)
+        bytes = []
+        while value > 0
+          bytes.unshift(value & 0xFF)
+          value >> 8
+        end
+
+        bytes = bytes.map(&:chr).join
+        raise 'Unsupported float size (#{bytes.size * 8} Bit)' unless bytes.size == 4
+        bytes.unpack('F')
       end
     end
   end

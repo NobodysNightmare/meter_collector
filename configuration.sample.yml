@@ -23,6 +23,7 @@ sources:
     unit_id: 128
     registers:
       totalWH:
-        address: 40302
-        register_count: 4
-        unit: 'Wh'
+        address: 30073
+        register_count: 2
+        format: float
+        unit: 'kWh'
