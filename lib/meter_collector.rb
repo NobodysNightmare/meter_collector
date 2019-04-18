@@ -1,4 +1,5 @@
 require 'meter_collector/energy_client'
+require 'meter_collector/register_converter'
 require 'meter_collector/sources'
 
 class MeterCollector
