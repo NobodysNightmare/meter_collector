@@ -15,13 +15,14 @@ class MeterCollector
       end
 
       def validate!
-        if @config_file.nil?
-          validation_error('Specifying a configuration file is required.')
-        end
+        return if @config_file
+
+        validation_error('Specifying a configuration file is required.')
       end
 
       private
 
+      # rubocop:disable Metrics/MethodLength
       def parser
         OptionParser.new do |p|
           p.banner = 'Usage: meter_collector -f FILE [options]'
@@ -35,12 +36,13 @@ class MeterCollector
             @mode = bool ? :upload : :print
           end
 
-          p.on_tail("-h", "--help", "Show this help message") do
+          p.on_tail('-h', '--help', 'Show this help message') do
             puts p
             exit
           end
         end
       end
+      # rubocop:enable Metrics/MethodLength
 
       def validation_error(message)
         puts message

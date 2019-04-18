@@ -15,15 +15,16 @@ module Sml
         5 => Types::SignedInteger,
         6 => Types::UnsignedInteger,
         7 => Types::List
-      }
+      }.freeze
 
       def parse(bytes)
         type, length = TypeLength.peek(bytes)
 
         if length.zero? && type.zero?
-          #EndOfSmlMsg is a special case
+          # EndOfSmlMsg is a special case
           return Types::EndOfSmlMessage.parse(bytes)
         end
+
         type_parser = PARSERS[type]
 
         raise "Encountered unknown type '#{type}'" unless type_parser

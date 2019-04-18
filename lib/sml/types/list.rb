@@ -12,7 +12,7 @@ module Sml
           raise ArgumentError, 'Not a list' unless type == TYPE
 
           result = []
-          length.times do |i|
+          length.times do |_i|
             result << Types.parse(bytes)
           end
           result

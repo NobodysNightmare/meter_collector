@@ -6,12 +6,12 @@ module Sml
       1 => ->(t) { t },
       2 => ->(t) { Time.at(t) },
       3 => ->(t) { Time.at(t[0]).getlocal(60 * (t[1] + t[2])) }
-    }
+    }.freeze
 
     class << self
       def from_tree(tree)
         # Optional values are represented as empty strings if they are missing
-        return nil if tree.is_a?(String) && tree.size == 0
+        return nil if tree.is_a?(String) && tree.empty?
 
         validate_choice!(tree)
         type = tree[0]

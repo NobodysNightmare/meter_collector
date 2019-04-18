@@ -9,6 +9,7 @@ module Sml
         def parse(bytes)
           type, length = TypeLength.parse(bytes)
           raise ArgumentError, 'Not a signed integer' unless type == TYPE
+
           length -= 1 # TL Byte is counted in length
           int_bytes = bytes.shift(length)
           result = 0

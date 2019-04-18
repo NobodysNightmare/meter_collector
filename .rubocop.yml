@@ -1,0 +1,20 @@
+AllCops:
+  Exclude:
+    - bin/rails
+    - bin/spring
+    - db/schema.rb
+    - lib/sml/**/* # mostly keeping that code for historical purposes
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/BlockLength:
+  ExcludedMethods:
+    - describe
+    - context
+
+Metrics/LineLength:
+  Max: 120
+
+Metrics/MethodLength:
+  Max: 12

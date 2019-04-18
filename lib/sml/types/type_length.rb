@@ -7,7 +7,7 @@ module Sml
       MORE_LENGTH_MASK = 128 # 1000 0000
       class << self
         def peek(bytes)
-          #TODO: improve this
+          # TODO: improve this
           # Assumption: There is no TL field longer than 10 Byte
           buffer = bytes[0..10]
           parse(buffer)
@@ -24,9 +24,10 @@ module Sml
 
         def fetch_length(tl, bytes)
           length_bytes = [tl & LENGTH_MASK]
-          while (tl & MORE_LENGTH_MASK) > 0 do
+          while (tl & MORE_LENGTH_MASK) > 0
             tl = bytes.shift
             raise ArgumentError, 'Unexpected Bits in TL Length extension' if (tl & TYPE_MASK) > 0
+
             length_bytes << tl & LENGTH_MASK
           end
 

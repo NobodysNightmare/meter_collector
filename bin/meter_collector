@@ -28,5 +28,4 @@ Raven.capture do
   else
     raise "Unexpected mode '#{options[:mode]}'"
   end
-
 end

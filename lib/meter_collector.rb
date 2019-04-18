@@ -8,14 +8,12 @@ class MeterCollector
   end
 
   def print_values
-    each_source_with_config do |source, config|
+    each_source_with_config do |source, _config|
       puts " ### #{source}"
       readings = source.fetch_readings
       readings.each do |key, reading|
         print "#{key}: #{reading.value.to_f} #{reading.unit}"
-        if reading.unit == 'kWh'
-          print " (#{to_wh(reading.value, reading.unit).to_i} Wh)"
-        end
+        print " (#{to_wh(reading.value, reading.unit).to_i} Wh)" if reading.unit == 'kWh'
         puts
       end
       puts
@@ -32,9 +30,8 @@ class MeterCollector
           puts "Skipping '#{key}': not in result set."
           next
         end
-        value = to_wh(reading.value, reading.unit).to_i
-        client = EnergyClient.new(upload_config['host'], upload_config['api_key'])
-        client.send_reading(time, upload_config['serial'], value)
+
+        upload_reading(reading, time, upload_config)
       end
     end
   end
@@ -45,6 +42,12 @@ class MeterCollector
     @config['sources'].each do |config|
       yield Sources.create_with_config(config), config
     end
+  end
+
+  def upload_reading(reading, time, upload_config)
+    value = to_wh(reading.value, reading.unit).to_i
+    client = EnergyClient.new(upload_config['host'], upload_config['api_key'])
+    client.send_reading(time, upload_config['serial'], value)
   end
 
   def to_wh(value, unit)

@@ -11,7 +11,7 @@ module Sml
     end
 
     def each_message
-      while true do
+      loop do
         tree = Sml::Types.parse(next_message_bytes)
         yield Message.new(tree)
       end
@@ -19,13 +19,11 @@ module Sml
 
     def next_message_bytes
       attribute = nil
-      until attribute == [1, 1, 1, 1] do
-        _, attribute = read_to_escape
-      end
+      _, attribute = read_to_escape until attribute == [1, 1, 1, 1]
 
       message = []
       attribute = []
-      until attribute[0] == 0x1a do
+      until attribute[0] == 0x1a
         part, attribute = read_to_escape
         message += part
         message += ESCAPE if attribute == ESCAPE
@@ -40,9 +38,7 @@ module Sml
 
     def read_to_escape
       bytes = []
-      until bytes[-8..-5] == ESCAPE do
-        bytes << @io.readbyte
-      end
+      bytes << @io.readbyte until bytes[-8..-5] == ESCAPE
 
       part = bytes[0..-9]
       escape_attribute = bytes[-4..-1]

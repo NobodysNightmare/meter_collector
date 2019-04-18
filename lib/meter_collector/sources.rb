@@ -6,14 +6,12 @@ class MeterCollector
     AVAILABLE_SOURCES = [
       Sources::D0Source,
       Sources::ModbusSource
-    ]
+    ].freeze
 
     class << self
       def create_with_config(config)
         source = AVAILABLE_SOURCES.find { |s| s.name == config.fetch('type') }
-        unless source
-          raise ArgumentError, "Can't find source for '#{config.fetch('type')}'"
-        end
+        raise ArgumentError, "Can't find source for '#{config.fetch('type')}'" unless source
 
         source.new(config)
       end

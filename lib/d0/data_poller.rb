@@ -5,18 +5,18 @@ module D0
   class DataPoller
     ACK = 0x06.chr
 
-    IDENTIFICATION_MATCHER = %r{\A/[A-Z][A-Z][A-Za-z]([0-9]).+$}
+    IDENTIFICATION_MATCHER = %r{\A/[A-Z][A-Z][A-Za-z]([0-9]).+$}.freeze
 
-    DATA_MATCHER = %r{([^()/!]+\([ ]*[0-9\.]+(?:\*[A-Za-z]+)?\))}
-    DATA_END_MATCHER = %r{\!}
-    DATA_SPLITTER = %r{([^()/!]+)\([ ]*([0-9\.]+)(?:\*([A-Za-z]+))?\)}
+    DATA_MATCHER = %r{([^()/!]+\([ ]*[0-9\.]+(?:\*[A-Za-z]+)?\))}.freeze
+    DATA_END_MATCHER = /\!/.freeze
+    DATA_SPLITTER = %r{([^()/!]+)\([ ]*([0-9\.]+)(?:\*([A-Za-z]+))?\)}.freeze
 
     DEFAULT_CONFIG = {
       'baud' => 300,
       'data_bits' => 7,
       'stop_bits' => 1,
       'parity' => SerialPort::EVEN
-    }
+    }.freeze
 
     BAUD_RATES = {
       '0' => 300,
@@ -25,7 +25,7 @@ module D0
       '3' => 2400,
       '4' => 4800,
       '5' => 9600
-    }
+    }.freeze
 
     attr_accessor :read_timeout
 
@@ -70,9 +70,10 @@ module D0
 
     def read_data
       result = {}
-      while true do
+      loop do
         row = wait_for([DATA_MATCHER, DATA_END_MATCHER])
         break if row.nil?
+
         data = DATA_SPLITTER.match(row)
         result[data[1]] = [Rational(data[2]), data[3]]
       end
@@ -81,7 +82,7 @@ module D0
 
     def wait_for(regexes)
       regexes = Array(regexes)
-      while true do
+      loop do
         message = nil
         Timeout.timeout(read_timeout) { message = @port.readline }
         matches = regexes.map { |r| r.match(message) }.compact

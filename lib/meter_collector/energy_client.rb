@@ -10,25 +10,32 @@ class MeterCollector
     def send_reading(time, serial, value)
       response = HTTParty.post(
         "#{@host}/api/meters/#{serial}/readings",
-        headers: {
-          'X-API-Key' => @api_key
-        },
-        body: {
-          readings: [
-            {
-              time: time.iso8601,
-              value: value
-            }
-          ]
-        })
+        headers: { 'Authorization' => "Bearer #{@api_key}" },
+        body: format_body(time, value)
+      )
 
-        if response.content_type != 'application/json'
-          raise "Unexpected Content-Type '#{response.content_type}'"
-        end
+      validate_response(response)
+    end
 
-        return if response.code == 201
+    private
 
-        raise response['error']
+    def format_body(time, value)
+      {
+        readings: [
+          {
+            time: time.iso8601,
+            value: value
+          }
+        ]
+      }
+    end
+
+    def validate_response(response)
+      raise "Unexpected Content-Type '#{response.content_type}'" if response.content_type != 'application/json'
+
+      return if response.code == 201
+
+      raise response['error']
     end
   end
 end

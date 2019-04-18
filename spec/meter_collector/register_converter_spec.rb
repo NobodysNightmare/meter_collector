@@ -7,10 +7,10 @@ describe MeterCollector::RegisterConverter do
     let(:format) { :integer }
 
     context 'when passing single register' do
-      let(:input) { [12345] }
+      let(:input) { [12_345] }
 
       it 'returns value of the register' do
-        is_expected.to eq(12345)
+        is_expected.to eq(12_345)
       end
     end
 

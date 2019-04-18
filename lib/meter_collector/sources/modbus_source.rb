@@ -20,15 +20,13 @@ class MeterCollector
         with_modbus_slave do |slave|
           registers.map do |register_name, register_config|
             value = slave.read_holding_registers(
-                      register_config.fetch('address'),
-                      register_config.fetch('register_count')
-                    )
+              register_config.fetch('address'),
+              register_config.fetch('register_count')
+            )
             converter = RegisterConverter.new(register_config.fetch('format', 'integer'))
             value = converter.convert_holding_registers(value)
-            [
-              register_name,
-              Reading.new(value, register_config.fetch('unit'))
-            ]
+
+            [register_name, Reading.new(value, register_config.fetch('unit'))]
           end.to_h
         end
       end
@@ -59,10 +57,8 @@ class MeterCollector
 
       def slave_url
         return @slave_url if defined? @slave_url
-        unless @config.key?('url')
-          @slave_url = nil
-          return nil
-        end
+
+        return @slave_url = nil unless @config.key?('url')
 
         url = URI.parse(@config.fetch('url'))
         unless url.scheme == 'modbus'
