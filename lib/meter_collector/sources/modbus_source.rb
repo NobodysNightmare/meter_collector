@@ -1,4 +1,5 @@
 require 'meter_collector/reading.rb'
+require 'rmodbus'
 
 class MeterCollector
   module Sources
@@ -37,10 +38,14 @@ class MeterCollector
 
       private
 
-      def with_modbus_slave(&block)
+      def with_modbus_slave
+        result = nil
         with_modbus_client do |client|
-          client.with_slave(@config.fetch('unit_id'), &block)
+          client.with_slave(@config.fetch('unit_id')) do |slave|
+            result = yield slave
+          end
         end
+        result
       end
 
       def with_modbus_client(&block)
