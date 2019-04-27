@@ -82,6 +82,7 @@ module D0
 
     def wait_for(regexes)
       regexes = Array(regexes)
+      matches = []
       loop do
         message = nil
         Timeout.timeout(read_timeout) { message = @port.readline }
