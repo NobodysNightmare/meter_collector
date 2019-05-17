@@ -5,10 +5,10 @@ class MeterCollector
   # point numbers (2 registers -> 32 Bit)
   class RegisterConverter
     # When reading floats stored in registers, we will return them
-    # as decimals to Ruby, where we add some implicit rounding.
-    # Assuming data represented for kWh 4 digits could bring us
-    # down to 0.1 Wh of precision.
-    FLOAT_PRECISION = 4
+    # as decimals to Ruby.
+    # Choosing a precision that can represent up to ten billion
+    # watt hours (9,999,999.999 kWh)
+    FLOAT_PRECISION = 10
 
     def initialize(format)
       @format = format.to_sym
