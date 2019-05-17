@@ -52,7 +52,7 @@ class MeterCollector
       bytes = bytes.map(&:chr).join
       raise "Unsupported float size (#{bytes.size * 8} Bit)" unless bytes.size == 4
 
-      BigDecimal(bytes.unpack('F').first, FLOAT_PRECISION)
+      BigDecimal(bytes.unpack('g').first, FLOAT_PRECISION)
     end
   end
 end
