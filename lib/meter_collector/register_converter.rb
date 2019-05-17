@@ -14,7 +14,7 @@ class MeterCollector
       @format = format.to_sym
     end
 
-    def convert_holding_registers(registers)
+    def convert_registers(registers)
       value = combine_holding_registers(registers)
       convert(value, @format)
     end

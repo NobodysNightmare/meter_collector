@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe MeterCollector::RegisterConverter do
-  subject { described_class.new(format).convert_holding_registers(input) }
+  subject { described_class.new(format).convert_registers(input) }
 
   describe 'registers representing integers' do
     let(:format) { :integer }

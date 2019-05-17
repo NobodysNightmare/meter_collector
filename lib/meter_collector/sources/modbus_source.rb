@@ -7,6 +7,8 @@ class MeterCollector
     # or via network (ModBus TCP).
     # Will only return readings for configured registers (or register spans).
     class ModbusSource
+      REGISTER_TYPES = %i[holding input].freeze
+
       class << self
         def name
           'modbus'
@@ -20,12 +22,12 @@ class MeterCollector
       def fetch_readings
         with_modbus_slave do |slave|
           registers.map do |register_name, register_config|
-            value = slave.read_holding_registers(
-              register_config.fetch('address'),
-              register_config.fetch('register_count')
-            )
+            value = read_register(slave,
+                                  register_config.fetch('type', :holding).to_sym,
+                                  register_config.fetch('address'),
+                                  register_config.fetch('register_count'))
             converter = RegisterConverter.new(register_config.fetch('format', 'integer'))
-            value = converter.convert_holding_registers(value)
+            value = converter.convert_registers(value)
 
             [register_name, Reading.new(value, register_config.fetch('unit'))]
           end.to_h
@@ -74,6 +76,16 @@ class MeterCollector
         url.port = 502 if url.port.nil?
 
         @slave_url = url
+      end
+
+      def read_register(slave, register_type, address, register_count)
+        raise "Unexpected register type #{register_type}." unless REGISTER_TYPES.include?(register_type)
+
+        slave.public_send(
+          "read_#{register_type}_registers",
+          address,
+          register_count
+        )
       end
 
       def slave_device_path
