@@ -28,3 +28,9 @@ sources:
         register_count: 2
         format: float
         unit: 'kWh'
+  - type: "fritz"
+    url: "http://192.168.178.1"
+    username: "user"
+    password: "123456"
+    switches:
+      refrigerator: "012340000123"
