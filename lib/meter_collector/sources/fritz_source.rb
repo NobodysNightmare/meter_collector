@@ -21,15 +21,6 @@ class MeterCollector
         end
       end
 
-      def list_switches
-        with_session do |sid|
-          res = HTTParty.get("#{base_url}/webservices/homeautoswitch.lua", query: { sid: sid, switchcmd: 'getswitchlist' })
-          res.to_s.split(',').each do |ain|
-            puts "#{ain}: #{fetch_name(sid, ain)}"
-          end
-        end
-      end
-
       def to_s
         "FritzBox at #{base_url}"
       end
@@ -41,8 +32,7 @@ class MeterCollector
         session_info = res.fetch('SessionInfo')
 
         if(session_info.fetch('BlockTime').to_i.positive?)
-          puts 'Aborting, client is blocked.'
-          return nil
+          raise 'Login is blocked. Rate limit reached.'
         end
 
         challenge = session_info.fetch('Challenge')
@@ -59,13 +49,26 @@ class MeterCollector
       end
 
       def fetch_energy(sid, ain)
-        res = HTTParty.get("#{base_url}/webservices/homeautoswitch.lua", query: { sid: sid, switchcmd: 'getswitchenergy', ain: ain })
-        Integer(res.to_s)
+        energy = fetch(sid: sid, switchcmd: 'getswitchenergy', ain: ain)
+        Integer(energy)
       end
 
       def fetch_name(sid, ain)
-        res = HTTParty.get("#{base_url}/webservices/homeautoswitch.lua", query: { sid: sid, switchcmd: 'getswitchname', ain: ain })
-        res.to_s
+        fetch(sid: sid, switchcmd: 'getswitchname', ain: ain)
+      end
+
+      def fetch_switches
+        with_session do |sid|
+          res = fetch(sid: sid, switchcmd: 'getswitchlist')
+          res.split(',').map do |ain|
+            [fetch_name(sid, ain), ain]
+          end.to_h
+        end
+      end
+
+      def fetch(**options)
+        res = HTTParty.get("#{base_url}/webservices/homeautoswitch.lua", query: options)
+        res.to_s.strip
       end
 
       def base_url
@@ -81,7 +84,7 @@ class MeterCollector
       end
 
       def switches
-        @config.fetch('switches')
+        @config.fetch('switches', fetch_switches)
       end
     end
   end

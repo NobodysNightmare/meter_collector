@@ -32,5 +32,7 @@ sources:
     url: "http://192.168.178.1"
     username: "user"
     password: "123456"
+    # Leaving switches out will try to enumerate all switches
+    # Though this takes longer than using a predefined list
     switches:
       refrigerator: "012340000123"
