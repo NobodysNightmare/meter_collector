@@ -31,7 +31,11 @@ class MeterCollector
     end
 
     def validate_response(response)
-      raise "Unexpected Content-Type '#{response.content_type}'" if response.content_type != 'application/json'
+      if response.content_type != 'application/json'
+        message = "Unexpected Content-Type '#{response.content_type}'"
+        message = "#{message} #{response.to_s}"
+        raise message
+      end
 
       return if response.code == 201
 
