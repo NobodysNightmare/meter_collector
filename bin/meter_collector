@@ -4,7 +4,7 @@ $LOAD_PATH << "#{root}/lib"
 
 require 'meter_collector'
 require 'meter_collector/cli/options'
-require 'raven'
+require 'sentry-ruby'
 require 'yaml'
 
 options = MeterCollector::Cli::Options.new
@@ -14,12 +14,12 @@ options.validate!
 configuration = YAML.load_file(options.config_file)
 collector = MeterCollector.new(configuration)
 
-Raven.configure do |config|
+Sentry.init do |config|
   config.dsn = configuration['sentry_dsn']
   config.logger.level = Logger::WARN
 end
 
-Raven.capture do
+begin
   case options.mode
   when :print
     collector.print_values
@@ -28,4 +28,6 @@ Raven.capture do
   else
     raise "Unexpected mode '#{options[:mode]}'"
   end
+rescue => e
+  Sentry.capture_exception(e)
 end

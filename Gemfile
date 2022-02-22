@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 gem 'httparty'
 gem 'rmodbus'
-gem 'sentry-raven'
+gem 'sentry-ruby'
 gem 'serialport'
 
 gem 'rspec', require: false
