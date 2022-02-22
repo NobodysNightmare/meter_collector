@@ -9,6 +9,10 @@ sources:
       1.8.0:
         <<: *remote
         serial: "ABC123"
+    mqtt_publishes:
+      1.8.0:
+        url: mqtt://10.13.37.10
+        topic: "meters/ABC123/total_energy"
   - type: "modbus"
     url: "modbus://127.0.0.1:502"
     unit_id: 128

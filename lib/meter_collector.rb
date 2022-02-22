@@ -2,6 +2,8 @@ require 'meter_collector/energy_client'
 require 'meter_collector/register_converter'
 require 'meter_collector/sources'
 
+require 'mqtt'
+
 class MeterCollector
   def initialize(configuration)
     @config = configuration
@@ -24,7 +26,7 @@ class MeterCollector
     each_source_with_config do |source, config|
       time = Time.now
       readings = source.fetch_readings
-      config['uploads'].each do |key, upload_config|
+      (config['uploads'] || []).each do |key, upload_config|
         reading = readings[key]
         unless reading
           puts "Skipping '#{key}': not in result set."
@@ -32,6 +34,16 @@ class MeterCollector
         end
 
         upload_reading(reading, time, upload_config)
+      end
+
+      (config['mqtt_publishes'] || []).each do |key, upload_config|
+        reading = readings[key]
+        unless reading
+          puts "Skipping '#{key}': not in result set."
+          next
+        end
+
+        publish_reading(reading, time, upload_config)
       end
     end
   end
@@ -48,6 +60,17 @@ class MeterCollector
     value = to_wh(reading.value, reading.unit).to_i
     client = EnergyClient.new(upload_config['host'], upload_config['api_key'])
     client.send_reading(time, upload_config['serial'], value)
+  end
+
+  def publish_reading(reading, time, upload_config)
+    MQTT::Client.connect(upload_config['url']) do |client|
+      payload = {
+        time: time.iso8601,
+        value: to_wh(reading.value, reading.unit).to_i,
+        unit: 'Wh'
+      }
+      client.publish(upload_config['topic'], payload.to_json)
+    end
   end
 
   def to_wh(value, unit)
