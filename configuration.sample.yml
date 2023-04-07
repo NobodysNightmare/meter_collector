@@ -40,3 +40,10 @@ sources:
     # Though this takes longer than using a predefined list
     switches:
       refrigerator: "012340000123"
+  - type: "shelly1"
+    url: "http://192.168.33.1"
+    username: "user"
+    password: "123456"
+    # meters are referred to by their index (0 on one channel devices, 0-2 on three channel, etc.)
+    meters:
+      desk: 0
