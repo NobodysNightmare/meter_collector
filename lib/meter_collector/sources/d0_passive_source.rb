@@ -5,13 +5,13 @@ require 'meter_collector/reading.rb'
 class MeterCollector
   module Sources
     # Reads from a D0 (IEC 62056-21 compliant) meter connected via
-    # (infrared) serial port. This is for Mode B meters, the meter will
-    # be explicitly queried to return data.
+    # (infrared) serial port. This is for Mode D devices and passively
+    # listens until it receives a signal from the meter.
     # Will return all readings sent by the meter.
-    class D0Source
+    class D0PassiveSource
       class << self
         def name
-          'd0'
+          'd0_passive'
         end
       end
 
@@ -22,7 +22,7 @@ class MeterCollector
       def fetch_readings
         result = nil
         SerialPort.open(@port_path) do |port|
-          result = D0::DataPoller.new(port).poll.map do |key, (value, unit)|
+          result = D0::DataPoller.new(port).wait_for_pushed_data.map do |key, (value, unit)|
             [key, Reading.new(value, unit)]
           end.to_h
         end

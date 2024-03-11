@@ -42,10 +42,17 @@ module D0
       read_data
     end
 
+    def wait_for_pushed_data
+      initialize_port(baud: 2400)
+
+      # TODO: handle timeout
+      read_data
+    end
+
     private
 
-    def initialize_port
-      @port.set_modem_params(DEFAULT_CONFIG)
+    def initialize_port(baud: 300)
+      @port.set_modem_params(DEFAULT_CONFIG.merge('baud' => baud))
     end
 
     def request_data
