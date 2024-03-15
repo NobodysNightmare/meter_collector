@@ -5,6 +5,8 @@ module Sml
     class SignedInteger
       TYPE = 0x5
 
+      SIGN_MASK = 0x80
+
       class << self
         def parse(bytes)
           type, length = TypeLength.parse(bytes)
@@ -17,7 +19,11 @@ module Sml
             result = (result << 8) | b
           end
 
-          raise 'Remember to take care of the sign!'
+          if (int_bytes.first & SIGN_MASK).positive?
+            puts 'Remember to take care of the sign!'
+            return result
+          end
+
           result
         end
       end

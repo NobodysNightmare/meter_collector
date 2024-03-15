@@ -12,6 +12,10 @@ module Sml
         @reference_time  = Sml::Time.from_tree(tree[4])
         @sml_version     = tree[5]
       end
+
+      def to_s
+        "<Body PORes T: #{reference_time} RF: #{request_file_id.inspect} S: #{server_id.inspect} V: #{sml_version.inspect}>"
+      end
     end
   end
 end

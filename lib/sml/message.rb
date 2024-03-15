@@ -21,7 +21,7 @@ module Sml
 
     def expect_message_structure!(tree)
       raise "Expected message structure of length 6, got #{tree.size}" unless tree.size == 6
-      raise 'No end of sml message found' unless tree[5].nil?
+      raise "Expected end-of-message, got: #{tree[5]}" unless tree[5].nil?
     end
   end
 end

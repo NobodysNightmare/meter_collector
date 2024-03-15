@@ -30,7 +30,6 @@ module Sml
       end
 
       last_index = -1 - attribute[1]
-      # TODO: CRC check
       message[0..last_index]
     end
 
