@@ -1,4 +1,5 @@
 require 'meter_collector/sources/d0_source.rb'
+require 'meter_collector/sources/d0_passive_source.rb'
 require 'meter_collector/sources/fritz_source.rb'
 require 'meter_collector/sources/modbus_source.rb'
 require 'meter_collector/sources/shelly1_source.rb'
@@ -7,6 +8,7 @@ class MeterCollector
   module Sources
     AVAILABLE_SOURCES = [
       Sources::D0Source,
+      Sources::D0PassiveSource,
       Sources::FritzSource,
       Sources::ModbusSource,
       Sources::Shelly1Source
