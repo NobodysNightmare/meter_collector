@@ -40,6 +40,12 @@ sources:
     # Though this takes longer than using a predefined list
     switches:
       refrigerator: "012340000123"
+  - type: "vzlogger"
+    url: "http://localhost:8081/"
+    channels:
+      - name: net-input
+        uuid: "f8614830-2d2a-4027-8b8b-ede467ae1f45"
+        unit: "Wh"
   - type: "shelly1"
     url: "http://192.168.33.1"
     username: "user"
