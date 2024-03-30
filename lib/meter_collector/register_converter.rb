@@ -31,6 +31,7 @@ class MeterCollector
       result
     end
 
+    # TODO: support for signed integers
     def convert(value, format)
       case format
       when :integer

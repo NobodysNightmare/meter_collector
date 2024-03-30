@@ -28,6 +28,7 @@ class MeterCollector
                                   register_config.fetch('register_count'))
             converter = RegisterConverter.new(register_config.fetch('format', 'integer'))
             value = converter.convert_registers(value)
+            value = fix_outliers(value, register_config.fetch('fix_outliers')) if register_config['fix_outliers']
 
             [register_name, Reading.new(value, register_config.fetch('unit'))]
           end.to_h
@@ -86,6 +87,14 @@ class MeterCollector
           address,
           register_count
         )
+      end
+
+      # Specific fix for SMA inverters returning the minimum signed int32 on the power register (30775),
+      # when no generation is happening
+      def fix_outliers(value, range)
+        return 0 if value.abs > range
+
+        value
       end
 
       def slave_device_path
