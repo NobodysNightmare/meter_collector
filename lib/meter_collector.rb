@@ -78,13 +78,13 @@ class MeterCollector
   def to_base_unit(value, unit)
     case unit
     when 'Wh'
-      value, 'Wh'
+      [value, 'Wh']
     when 'W'
-      value, 'W'
+      [value, 'W']
     when 'kWh'
-      value * 1000, 'Wh'
+      [value * 1000, 'Wh']
     when 'kW'
-      value * 1000, 'W'
+      [value * 1000, 'W']
     else
       raise "Unsupported unit '#{unit}'"
     end
