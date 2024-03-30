@@ -58,9 +58,9 @@ class MeterCollector
   end
 
   def upload_reading(reading, time, upload_config)
-    value, _ = to_base_unit(reading.value, reading.unit).to_i
+    value, _ = to_base_unit(reading.value, reading.unit)
     client = EnergyClient.new(upload_config['host'], upload_config['api_key'])
-    client.send_reading(time, upload_config['serial'], value)
+    client.send_reading(time, upload_config['serial'], value.to_i)
   end
 
   def publish_reading(reading, time, upload_config)
