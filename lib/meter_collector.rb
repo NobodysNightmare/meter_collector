@@ -23,8 +23,10 @@ class MeterCollector
     end
   end
 
-  def upload_values
+  def upload_everywhere
     each_source_with_config do |source, config|
+      puts "Uploading everywhere for #{source}..."
+
       time = Time.now
       readings = source.fetch_readings
       (config['uploads'] || []).each do |key, upload_config|
@@ -36,6 +38,25 @@ class MeterCollector
 
         upload_reading(reading, time, upload_config)
       end
+
+      (config['mqtt_publishes'] || []).each do |key, upload_config|
+        reading = readings[key]
+        unless reading
+          puts "Skipping '#{key}': not in result set."
+          next
+        end
+
+        publish_reading(reading, time, upload_config)
+      end
+    end
+  end
+
+  def upload_mqtt_only
+    each_source_with_config do |source, config|
+      puts "Uploading to MQTT for #{source}..."
+
+      time = Time.now
+      readings = source.fetch_readings
 
       (config['mqtt_publishes'] || []).each do |key, upload_config|
         reading = readings[key]

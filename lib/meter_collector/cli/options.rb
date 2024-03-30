@@ -33,7 +33,11 @@ class MeterCollector
           end
 
           p.on('-u', '--upload', 'Upload values to configured server, instead of just printing them') do |bool|
-            @mode = bool ? :upload : :print
+            @mode = :upload if bool
+          end
+
+          p.on('-m', '--mqtt-only', 'Like upload, but just uploading to MQTT targets') do |bool|
+            @mode = :mqtt if bool
           end
 
           p.on_tail('-h', '--help', 'Show this help message') do

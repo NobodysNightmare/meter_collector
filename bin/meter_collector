@@ -24,7 +24,9 @@ begin
   when :print
     collector.print_values
   when :upload
-    collector.upload_values
+    collector.upload_everywhere
+  when :mqtt
+    collector.upload_mqtt_only
   else
     raise "Unexpected mode '#{options[:mode]}'"
   end
