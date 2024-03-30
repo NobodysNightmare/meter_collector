@@ -15,7 +15,8 @@ class MeterCollector
       readings = source.fetch_readings
       readings.each do |key, reading|
         print "#{key}: #{reading.value.to_f} #{reading.unit}"
-        print " (#{to_wh(reading.value, reading.unit).to_i} Wh)" if reading.unit == 'kWh'
+        value, unit = to_base_unit(reading.value, reading.unit)
+        print " (#{value.to_i} Wh)" if reading.unit != unit
         puts
       end
       puts
@@ -57,28 +58,33 @@ class MeterCollector
   end
 
   def upload_reading(reading, time, upload_config)
-    value = to_wh(reading.value, reading.unit).to_i
+    value, _ = to_base_unit(reading.value, reading.unit).to_i
     client = EnergyClient.new(upload_config['host'], upload_config['api_key'])
     client.send_reading(time, upload_config['serial'], value)
   end
 
   def publish_reading(reading, time, upload_config)
     MQTT::Client.connect(upload_config['url']) do |client|
+      value, unit = to_base_unit(reading.value, reading.unit)
       payload = {
         time: time.iso8601,
-        value: to_wh(reading.value, reading.unit).to_i,
-        unit: 'Wh'
+        value: value.to_i,
+        unit: unit
       }
       client.publish(upload_config['topic'], payload.to_json)
     end
   end
 
-  def to_wh(value, unit)
+  def to_base_unit(value, unit)
     case unit
     when 'Wh'
-      value
+      value, 'Wh'
+    when 'W'
+      value, 'W'
     when 'kWh'
-      value * 1000
+      value * 1000, 'Wh'
+    when 'kW'
+      value * 1000, 'W'
     else
       raise "Unsupported unit '#{unit}'"
     end
