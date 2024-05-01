@@ -53,3 +53,8 @@ sources:
     # meters are referred to by their index (0 on one channel devices, 0-2 on three channel, etc.)
     meters:
       desk: 0
+    # Always exposes the total energy of meter 0 as "total"
+  - type: "warp"
+    url: "http://192.168.178.10"
+    username: "user"
+    password: "123456"

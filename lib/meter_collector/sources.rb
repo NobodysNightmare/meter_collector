@@ -4,6 +4,7 @@ require 'meter_collector/sources/fritz_source.rb'
 require 'meter_collector/sources/modbus_source.rb'
 require 'meter_collector/sources/shelly1_source.rb'
 require 'meter_collector/sources/vzlogger_source.rb'
+require 'meter_collector/sources/warp_source.rb'
 
 class MeterCollector
   module Sources
@@ -13,7 +14,8 @@ class MeterCollector
       Sources::FritzSource,
       Sources::ModbusSource,
       Sources::Shelly1Source,
-      Sources::VzloggerSource
+      Sources::VzloggerSource,
+      Sources::WarpSource
     ].freeze
 
     class << self
