@@ -102,6 +102,14 @@ class MeterCollector
       [value, 'Wh']
     when 'W'
       [value, 'W']
+    when 'daWh'
+      [value * 10, 'Wh']
+    when 'daW'
+      [value * 10, 'W']
+    when 'hWh'
+      [value * 100, 'Wh']
+    when 'hW'
+      [value * 100, 'W']
     when 'kWh'
       [value * 1000, 'Wh']
     when 'kW'
