@@ -21,6 +21,14 @@ sources:
         address: 40302
         register_count: 4
         unit: 'Wh'
+  - type: "mqtt"
+    url: "mqtt://user:pass@hostname"
+    timeout: 10
+    meters:
+      myMeterName:
+        topic: "foo/bar/total_energy"
+        unit: "kWh"
+        json_path: "path/to/value" #optional, if left out no JSON parsing happens
   - type: "modbus"
     path: "/dev/ttyUSB0"
     baud: 4800

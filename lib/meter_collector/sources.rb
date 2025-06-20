@@ -2,6 +2,7 @@ require 'meter_collector/sources/d0_source.rb'
 require 'meter_collector/sources/d0_passive_source.rb'
 require 'meter_collector/sources/fritz_source.rb'
 require 'meter_collector/sources/modbus_source.rb'
+require 'meter_collector/sources/mqtt_source.rb'
 require 'meter_collector/sources/shelly1_source.rb'
 require 'meter_collector/sources/vzlogger_source.rb'
 require 'meter_collector/sources/warp_source.rb'
@@ -13,6 +14,7 @@ class MeterCollector
       Sources::D0PassiveSource,
       Sources::FritzSource,
       Sources::ModbusSource,
+      Sources::MqttSource,
       Sources::Shelly1Source,
       Sources::VzloggerSource,
       Sources::WarpSource
